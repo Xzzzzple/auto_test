@@ -44,7 +44,7 @@ pipeline {
                     // --junitxml=report.xml 是关键：生成 JUnit 格式的 XML 报告
                     sh '''
                         source venv/bin/activate
-                        pytest tests/ --junitxml=test-results/results.xml -v
+                        pytest test_baidu_search.py --junitxml=test-results/results.xml -v
                     '''
                 }
             }
