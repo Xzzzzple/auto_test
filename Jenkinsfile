@@ -16,10 +16,8 @@ pipeline {
                     // 创建虚拟环境 (推荐做法，避免污染服务器全局环境)
                     // 如果 Jenkins 节点是 Linux/Mac
                     sh '''
-                        python3 -m venv venv
-                        source venv/bin/activate
-                        pip install --upgrade pip
-                        pip install -r requirements.txt
+                        pip3 install --user --upgrade pip
+                        pip3 install --user -r requirements.txt
                     '''
                     // 如果是 Windows 节点，命令略有不同:
                     // bat '''
@@ -37,7 +35,7 @@ pipeline {
                     // 激活虚拟环境并运行测试
                     // --junitxml=report.xml 是关键：生成 JUnit 格式的 XML 报告
                     sh '''
-                        source venv/bin/activate
+                        export PATH=$HOME/.local/bin:$PATH
                         pytest test_baidu_search.py --junitxml=test-results/results.xml -v
                     '''
                 }
@@ -49,19 +47,14 @@ pipeline {
         always {
             // 【关键】无论测试成功还是失败，都执行此块来收集报告
             // 告诉 Jenkins 去解析生成的 XML 文件
-            junit 'test-results/*.xml'
-            
-            // 可选：清理虚拟环境，节省空间
-            sh 'rm -rf venv'
+            sh 'mkdir -p test-results'
+            junit allowEmptyResults: true, testResults: 'test-results/*.xml'
         }
-        
         failure {
-            echo '测试失败了！请查看下方的 Test Result 详情。'
-            // 这里可以添加发送通知邮件的逻辑
+            echo '构建失败！'
         }
-        
         success {
-            echo '恭喜！所有测试通过。'
+            echo '构建成功！'
         }
     }
 }
