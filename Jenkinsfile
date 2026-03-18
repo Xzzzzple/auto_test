@@ -1,12 +1,6 @@
 pipeline {
     agent any // 在任何可用的 Jenkins 节点上运行
 
-    tools {
-        // 如果你的 Jenkins 配置了特定的 Python 工具名称，可以在这里引用
-        // 例如：python 'MyPython3' 
-        // 如果没配置，我们直接在 stage 里用系统自带的 python/pip
-    }
-
     stages {
         stage('Checkout Code') {
             steps {
